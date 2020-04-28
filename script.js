@@ -75,9 +75,9 @@ var Bar = /** @class */ (function () {
         ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
     };
     Bar.prototype.update = function (delta) {
-        if (keyADown)
+        if (inputL)
             this.x -= 300 * delta;
-        if (keyDDown)
+        if (inputR)
             this.x += 300 * delta;
         if (this.x < this.width / 2)
             this.x = this.width / 2;
@@ -174,8 +174,8 @@ var ObjectPool = /** @class */ (function () {
 /// <reference path = "bar.ts"/>
 /// <reference path = "block.ts"/>
 /// <reference path = "objectPool.ts"/>
-var keyADown = false;
-var keyDDown = false;
+var inputL = false;
+var inputR = false;
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 // キー入力
@@ -185,21 +185,35 @@ canvas.addEventListener("keyup", keyUp);
 function keyPress(ev) {
     switch (ev.key) {
         case "a":
-            keyADown = true;
+            inputL = true;
             break;
         case "d":
-            keyDDown = true;
+            inputR = true;
             break;
     }
 }
 function keyUp(ev) {
     switch (ev.key) {
         case "a":
-            keyADown = false;
+            inputL = false;
             break;
         case "d":
-            keyDDown = false;
+            inputR = false;
             break;
+    }
+}
+if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
+    canvas.addEventListener("mousedown", mouseDown);
+    function mouseDown(mv) {
+        if (mv.offsetX < canvas.width / 2)
+            inputL = true;
+        else
+            inputR = true;
+    }
+    canvas.addEventListener("mouseup", mouseUp);
+    function mouseUp() {
+        inputL = false;
+        inputR = false;
     }
 }
 var state = 0;
@@ -214,7 +228,7 @@ function render() {
             ctx.textAlign = "center";
             ctx.fillStyle = "black";
             ctx.fillText("press key a or d", canvas.width / 2, canvas.height / 2);
-            if (keyADown || keyDDown) {
+            if (inputL || inputR) {
                 state = 1;
                 objectPool = new ObjectPool();
             }
@@ -231,7 +245,7 @@ function render() {
             ctx.fillStyle = "red";
             ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
             if (count > 30) {
-                if (keyADown || keyDDown) {
+                if (inputL || inputR) {
                     state = 1;
                     objectPool = new ObjectPool();
                 }
