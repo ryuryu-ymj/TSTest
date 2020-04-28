@@ -182,8 +182,8 @@ var ctx = canvas.getContext('2d');
 canvas.setAttribute('tabindex', "0");
 canvas.addEventListener("keypress", keyPress);
 canvas.addEventListener("keyup", keyUp);
-function keyPress(ev) {
-    switch (ev.key) {
+function keyPress(event) {
+    switch (event.key) {
         case "a":
             inputL = true;
             break;
@@ -192,8 +192,8 @@ function keyPress(ev) {
             break;
     }
 }
-function keyUp(ev) {
-    switch (ev.key) {
+function keyUp(event) {
+    switch (event.key) {
         case "a":
             inputL = false;
             break;
@@ -202,20 +202,17 @@ function keyUp(ev) {
             break;
     }
 }
-if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
-    canvas.addEventListener("mousedown", mouseDown);
-    function mouseDown(mv) {
-        if (mv.offsetX < canvas.width / 2)
-            inputL = true;
-        else
-            inputR = true;
-    }
-    canvas.addEventListener("mouseup", mouseUp);
-    function mouseUp() {
-        inputL = false;
-        inputR = false;
-    }
+canvas.addEventListener("touchmove", touchmove);
+function touchmove(event) {
+    if (event.targetTouches[0].pageX < canvas.width / 2)
+        inputL = true;
+    else
+        inputR = true;
 }
+canvas.addEventListener("touchend", function () {
+    inputL = false;
+    inputR = false;
+});
 var state = 0;
 var count = 0;
 var objectPool;
