@@ -12,34 +12,32 @@ const ctx = canvas.getContext('2d');
 canvas.setAttribute('tabindex', "0");
 canvas.addEventListener("keypress", keyPress);
 canvas.addEventListener("keyup", keyUp);
-function keyPress(ev: KeyboardEvent) {
-    switch (ev.key) {
+function keyPress(event: KeyboardEvent) {
+    switch (event.key) {
         case "a": inputL = true;
             break;
         case "d": inputR = true;
             break;
     }
 }
-function keyUp(ev: KeyboardEvent) {
-    switch (ev.key) {
+function keyUp(event: KeyboardEvent) {
+    switch (event.key) {
         case "a": inputL = false;
             break;
         case "d": inputR = false;
             break;
     }
 }
-if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
-    canvas.addEventListener("mousedown", mouseDown);
-    function mouseDown(mv: MouseEvent) {
-        if (mv.offsetX < canvas.width / 2) inputL = true;
-        else inputR = true;
-    }
-    canvas.addEventListener("mouseup", mouseUp);
-    function mouseUp() {
-        inputL = false;
-        inputR = false;
-    }
+canvas.addEventListener("touchmove", touchmove);
+function touchmove(event: TouchEvent) {
+    if (event.targetTouches[0].pageX < canvas.width / 2) inputL = true;
+    else inputR = true;
 }
+canvas.addEventListener("touchend", () => {
+    inputL = false;
+    inputR = false;
+});
+
 
 let state = 0;
 let count = 0;
