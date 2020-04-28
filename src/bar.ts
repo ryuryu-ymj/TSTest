@@ -10,7 +10,9 @@ class Bar {
     }
 
     update(delta: number) {
-        if (keyADown) this.x -= 5;
-        if (keyDDown) this.x += 5;
+        if (keyADown) this.x -= 300 * delta;
+        if (keyDDown) this.x += 300 * delta;
+        if (this.x < this.width / 2) this.x = this.width / 2;
+        else if (this.x > canvas.width - this.width / 2) this.x = canvas.width - this.width / 2;
     }
 }

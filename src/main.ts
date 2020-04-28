@@ -1,6 +1,7 @@
 /// <reference path = "ball.ts"/>
 /// <reference path = "bar.ts"/>
 /// <reference path = "block.ts"/>
+/// <reference path = "objectPool.ts"/>
 let keyADown = false;
 let keyDDown = false;
 
@@ -28,15 +29,9 @@ function keyUp(ev: KeyboardEvent) {
     }
 }
 
-let bar = new Bar();
-let ball = new Ball();
-let blocks = new Array<Block>(300);
-for (let i = 0; i < blocks.length; i++) {
-    blocks[i] = new Block(10 + i % 30 * 20, 50 + Math.floor(i / 30) * 20);
-}
-
 let state = 0;
-let previousTime = new Date().getTime();
+let count = 0;
+let objectPool: ObjectPool;
 
 function render() {
     // 画面のクリア
@@ -50,35 +45,31 @@ function render() {
             ctx.fillText("press key a or d", canvas.width / 2, canvas.height / 2);
             if (keyADown || keyDDown) {
                 state = 1;
-                previousTime = new Date().getTime();
+                objectPool = new ObjectPool();
             }
             break;
         case 1: // play
-            // draw
-            bar.draw();
-            ball.draw();
-            blocks.forEach(it => it.draw());
-
-            // 経過時間の測定
-            let presentTime = new Date().getTime();
-            let delta = (presentTime - previousTime) / 1000;
-            //console.log("fps = " + 1 / delta);
-            previousTime = presentTime;
-
-            update(delta);
+            objectPool.draw();
+            objectPool.update();
+            if (objectPool.isGameOver) {
+                state = 2;
+                count = 0;
+            }
             break;
         case 2: // gameover
             ctx.fillStyle = "red";
             ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
+            if (count > 30) {
+                if (keyADown || keyDDown) {
+                    state = 1;
+                    objectPool = new ObjectPool();
+                }
+            }
             break;
     }
+    count++;
 
     window.requestAnimationFrame(render);
-}
-
-function update(delta: number) {
-    bar.update(delta);
-    ball.update(delta);
 }
 
 render();
