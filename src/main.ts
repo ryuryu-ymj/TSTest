@@ -28,8 +28,8 @@ function keyUp(event: KeyboardEvent) {
             break;
     }
 }
-canvas.addEventListener("touchmove", touchmove);
-function touchmove(event: TouchEvent) {
+canvas.addEventListener("touchstart", touchStart);
+function touchStart(event: TouchEvent) {
     if (event.targetTouches[0].pageX < canvas.width / 2) inputL = true;
     else inputR = true;
 }
