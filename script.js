@@ -202,8 +202,8 @@ function keyUp(event) {
             break;
     }
 }
-canvas.addEventListener("touchmove", touchmove);
-function touchmove(event) {
+canvas.addEventListener("touchstart", touchStart);
+function touchStart(event) {
     if (event.targetTouches[0].pageX < canvas.width / 2)
         inputL = true;
     else
