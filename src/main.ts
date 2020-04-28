@@ -2,8 +2,8 @@
 /// <reference path = "bar.ts"/>
 /// <reference path = "block.ts"/>
 /// <reference path = "objectPool.ts"/>
-let keyADown = false;
-let keyDDown = false;
+let inputL = false;
+let inputR = false;
 
 const canvas = <HTMLCanvasElement>document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -14,18 +14,30 @@ canvas.addEventListener("keypress", keyPress);
 canvas.addEventListener("keyup", keyUp);
 function keyPress(ev: KeyboardEvent) {
     switch (ev.key) {
-        case "a": keyADown = true;
+        case "a": inputL = true;
             break;
-        case "d": keyDDown = true;
+        case "d": inputR = true;
             break;
     }
 }
 function keyUp(ev: KeyboardEvent) {
     switch (ev.key) {
-        case "a": keyADown = false;
+        case "a": inputL = false;
             break;
-        case "d": keyDDown = false;
+        case "d": inputR = false;
             break;
+    }
+}
+if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
+    canvas.addEventListener("mousedown", mouseDown);
+    function mouseDown(mv: MouseEvent) {
+        if (mv.offsetX < canvas.width / 2) inputL = true;
+        else inputR = true;
+    }
+    canvas.addEventListener("mouseup", mouseUp);
+    function mouseUp() {
+        inputL = false;
+        inputR = false;
     }
 }
 
@@ -43,7 +55,7 @@ function render() {
             ctx.textAlign = "center";
             ctx.fillStyle = "black";
             ctx.fillText("press key a or d", canvas.width / 2, canvas.height / 2);
-            if (keyADown || keyDDown) {
+            if (inputL || inputR) {
                 state = 1;
                 objectPool = new ObjectPool();
             }
@@ -60,7 +72,7 @@ function render() {
             ctx.fillStyle = "red";
             ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
             if (count > 30) {
-                if (keyADown || keyDDown) {
+                if (inputL || inputR) {
                     state = 1;
                     objectPool = new ObjectPool();
                 }
